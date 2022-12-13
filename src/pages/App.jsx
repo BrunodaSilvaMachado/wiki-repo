@@ -7,6 +7,7 @@ import ItemRepositorio from '../components/ItemRepositorio';
 import { api } from '../services/api';
 
 import { Container, ImgStyled } from './styles';
+import { Row } from '../components/ItemRepositorio/styles';
 
 function App() {
 
@@ -15,18 +16,16 @@ function App() {
 
 
   const handleSearchRepository = async () => {
+    try{
+      const {data} = await api.get(`repos/${currentRepo}`)
 
-    const {data} = await api.get(`repos/${currentRepo}`)
-    
-    if(data.id){
       if(!repository.find(repo => repo.id === data.id)){
         setRepository(prev => [...prev, data]);
         setCurrentRepo('')
       }
-      return
+    }catch{
+      alert('Repositório não encontrado')
     }
-    alert('Repositório não encontrado')
-
   }
 
   const handleRemoveRepo = (id) => {
@@ -36,7 +35,10 @@ function App() {
 
   return (
     <Container>
+      <Row>
       <ImgStyled src={gitLogo} alt = "github logo" width={72} height={72}/>
+      <h1>WIKI</h1>
+      </Row>
       <Input value={currentRepo} onChange={(e) => setCurrentRepo(e.target.value)} />
       <Button title="Buscar" onClick={handleSearchRepository} height="62px" width="80%"/>
       {repository.map(repo => <ItemRepositorio handleRemoveRepo={handleRemoveRepo} repo={repo}/>)}
